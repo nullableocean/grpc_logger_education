@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+option go_package = "./pb";
+
+package main;
+
+message Event {
+    int64  timestamp = 1;
+    string consumer  = 2;
+    string method    = 3;
+    string host      = 4; // remote_addr
+}
+
+message Stat {
+    int64               timestamp   = 1;
+    map<string, uint64> by_method   = 2;
+    map<string, uint64> by_consumer = 3;
+}
+
+message StatInterval {
+    uint64              interval_seconds   = 1;
+}
+
+message Nothing {
+    bool dummy = 1;
+}
+
+service Admin {
+    rpc Logging (Nothing) returns (stream Event) {}
+    rpc Statistics (StatInterval) returns (stream Stat) {}
+}
+
+service Biz {
+    rpc Check(Nothing) returns(Nothing) {}
+    rpc Add(Nothing) returns(Nothing) {}
+    rpc Test(Nothing) returns(Nothing) {}
+}
